@@ -1,8 +1,11 @@
 package com.LoginService.login.controller;
 
+import com.LoginService.login.DTO.ForgotPasswordRequestDTO;
 import com.LoginService.login.DTO.LoginRequestDTO;
 import com.LoginService.login.DTO.SignUpRequestDTO;
 import com.LoginService.login.DTO.UserResponseDTO;
+import com.LoginService.login.exception.CustomException.RefreshTokenNotFoundException;
+import com.LoginService.login.exception.CustomException.UsernameNotFoundException;
 import com.LoginService.login.service.GoogleLoginService;
 import com.LoginService.login.service.LoginService;
 import com.LoginService.login.service.SignUpService;
@@ -43,19 +46,19 @@ public class AuthController {
             response.addCookie(cookie);
         });
 
-        return new ResponseEntity<String>("Success", HttpStatus.OK);
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
 
     @PostMapping("signup")
     public ResponseEntity<UserResponseDTO> signup(@RequestBody SignUpRequestDTO userCredentialsDTO){
         UserResponseDTO user = signUpService.signup(userCredentialsDTO);
-        return new ResponseEntity<UserResponseDTO>(user, HttpStatus.CREATED);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
 
     @GetMapping("refresh")
-    public ResponseEntity<String> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken, HttpServletResponse response){
+    public ResponseEntity<String> refreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken, HttpServletResponse response) throws RefreshTokenNotFoundException {
         if(refreshToken!=null) {
             var jwtToken =  loginService.validateRefreshToken(refreshToken);
             if( jwtToken!= null && !jwtToken.isEmpty()){
@@ -64,8 +67,7 @@ public class AuthController {
                 return new ResponseEntity<>("Success", HttpStatus.OK);
             }
         }
-        return new ResponseEntity<>("Failed", HttpStatus.NOT_ACCEPTABLE);
-
+        throw new RefreshTokenNotFoundException();
     }
 
 
@@ -99,6 +101,11 @@ public class AuthController {
         // Redirect the user to Google’s login page
         response.sendRedirect(authorizationUrl);
         return new ResponseEntity<>("FOUND",HttpStatus.FOUND);
+    }
+
+    @PatchMapping("forgot-password")
+    public  ResponseEntity<String> handleForgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO) throws UsernameNotFoundException {
+            return  loginService.forgotPassword(forgotPasswordRequestDTO);
     }
 
     @GetMapping("/google/callback")

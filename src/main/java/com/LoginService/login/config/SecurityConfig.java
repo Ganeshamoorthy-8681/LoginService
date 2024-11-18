@@ -44,7 +44,8 @@ public class SecurityConfig {
                                             "/api/auth/signup",
                                             "/api/auth/refresh",
                                             "/api/auth/login-with-google",
-                                            "/api/auth/google/callback"
+                                            "/api/auth/google/callback",
+                                            "/api/auth/forgot-password"
                                     )
                                 .permitAll()
                                 .anyRequest().authenticated()

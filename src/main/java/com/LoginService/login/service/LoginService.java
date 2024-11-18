@@ -1,7 +1,9 @@
 package com.LoginService.login.service;
 
+import com.LoginService.login.DTO.ForgotPasswordRequestDTO;
 import com.LoginService.login.DTO.LoginRequestDTO;
 import com.LoginService.login.entity.User;
+import com.LoginService.login.exception.CustomException.UsernameNotFoundException;
 import com.LoginService.login.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -63,6 +66,19 @@ public class LoginService {
             return new ResponseEntity<>("DELETED", HttpStatus.OK);
         }
         return new ResponseEntity<>("NOT_FOUND",HttpStatus.NOT_FOUND);
+    }
+
+
+    public ResponseEntity<String> forgotPassword(ForgotPasswordRequestDTO forgotPasswordRequestDTO){
+        User user = usersRepo.findByEmail(forgotPasswordRequestDTO.getEmail());
+        if(user == null){
+            throw new UsernameNotFoundException();
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
+        String encryptedPassword =  bCryptPasswordEncoder.encode(forgotPasswordRequestDTO.getPassword());
+        user.setPassword(encryptedPassword);
+        usersRepo.save(user);
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
 }

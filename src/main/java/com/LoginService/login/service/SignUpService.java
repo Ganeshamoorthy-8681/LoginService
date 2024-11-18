@@ -34,7 +34,7 @@ public class SignUpService {
      user.setEmail(signUpRequestDTO.getEmail());
      user.setPassword(encryptedPassword);
      user.setProvider(UserProviderEnum.SELF);
-     return userDTO.covertUserToUserDto(usersRepo.save(user)) ;
+     return userDTO.covertUserToUserDto(usersRepo.save(user));
     }
 
 
