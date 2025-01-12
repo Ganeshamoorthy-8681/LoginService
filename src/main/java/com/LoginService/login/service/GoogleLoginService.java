@@ -7,6 +7,7 @@ import com.LoginService.login.entity.response.GetTokenResponseEntity;
 import com.LoginService.login.entity.response.PublicKeyEntity;
 import com.LoginService.login.entity.response.PublicKeyListResponseEntity;
 import com.LoginService.login.enums.UserProviderEnum;
+import com.LoginService.login.producer.AccountCreationProducer;
 import com.LoginService.login.repository.UsersRepo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -47,6 +48,9 @@ public class GoogleLoginService {
     private UsersRepo usersRepo;
 
     @Autowired JWTService jwtService;
+
+    @Autowired
+    private AccountCreationProducer accountCreationProducer;
 
    public Map<String,String> handleGoogleLoginCallback(String authorizationCode){
 
@@ -171,7 +175,13 @@ public class GoogleLoginService {
    private void saveUser(User user){
 
        if(!isUserExists(user.getEmail())){
-           usersRepo.save(user);
+           var userData = usersRepo.save(user);
+
+           HashMap map = new HashMap<String,String>();
+           map.put("userId",userData.getId());
+           map.put("username",userData.getUsername());
+           map.put("email",userData.getEmail());
+           accountCreationProducer.sendMessage(map,"account_create");
            System.out.println("User Saved to DB.");
        }else {
            System.out.println("User Already Exists");

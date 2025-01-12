@@ -2,8 +2,10 @@ package com.LoginService.login.service;
 
 import com.LoginService.login.DTO.ForgotPasswordRequestDTO;
 import com.LoginService.login.DTO.LoginRequestDTO;
+import com.LoginService.login.DTO.UserResponseDTO;
 import com.LoginService.login.entity.User;
 import com.LoginService.login.exception.CustomException.UsernameNotFoundException;
+import com.LoginService.login.mapper.UserDTO;
 import com.LoginService.login.repository.UsersRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,9 @@ public class LoginService {
 
     @Autowired
     private UsersRepo usersRepo;
+
+    @Autowired
+    private UserDTO userDTO;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -79,6 +84,17 @@ public class LoginService {
         user.setPassword(encryptedPassword);
         usersRepo.save(user);
         return new ResponseEntity<>("Success", HttpStatus.OK);
+    }
+
+    public ResponseEntity<UserResponseDTO> getUser(String jwtToken){
+       String email = jwtService.getTokenSubject(jwtToken);
+        var user  =this.usersRepo.findByEmail(email);
+        if(user!=null){
+            var userResponseDto = this.userDTO.covertUserToUserDto(user);
+            return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
+        }else {
+            throw new UsernameNotFoundException();
+        }
     }
 
 }

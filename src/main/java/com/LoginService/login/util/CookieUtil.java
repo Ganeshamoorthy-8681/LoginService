@@ -20,9 +20,12 @@ public class CookieUtil {
     public static Cookie createCookie(String cookieName, String cookieValue, Optional<Integer> maxAge) {
         var cookie =  new Cookie(cookieName, cookieValue);
         cookie.setSecure(true);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
+        cookie.setPath("/");
+        cookie.setDomain("localhost");
+//        cookie.setMaxAge(60 * 60 * 24);
         maxAge.ifPresent(cookie::setMaxAge);
-        cookie.setAttribute("SameSite","Strict");
+        cookie.setAttribute("SameSite","None");
         return cookie;
     }
 }

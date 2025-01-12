@@ -4,10 +4,8 @@ import com.LoginService.login.exception.CustomException.RefreshTokenNotFoundExce
 import com.LoginService.login.exception.CustomException.UserAlreadyExistsException;
 import com.LoginService.login.exception.entity.Error;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.netty.handler.codec.http.HttpStatusClass;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,6 +44,6 @@ public class GlobalExceptionHandler {
 
 
     private static Error getErrorInstance(String errorMessage, int statusCode){
-        return  new Error(errorMessage,statusCode);
+        return new Error(errorMessage,statusCode);
     }
 }

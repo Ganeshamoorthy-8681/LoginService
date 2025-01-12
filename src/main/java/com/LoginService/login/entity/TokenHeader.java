@@ -8,8 +8,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class TokenHeader {
-
     String alg;
     String kid;
-
 }

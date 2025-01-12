@@ -12,7 +12,7 @@ public class UserDTO {
 
         if(user == null ) return  null ;
 
-        UserResponseDTO userResponseDTO = new UserResponseDTO(
+        return new UserResponseDTO(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -20,6 +20,5 @@ public class UserDTO {
                 user.getCreatedOn(),
                 user.getUpdatedOn()
         );
-        return userResponseDTO ;
     }
 }

@@ -45,12 +45,13 @@ public class SecurityConfig {
                                             "/api/auth/refresh",
                                             "/api/auth/login-with-google",
                                             "/api/auth/google/callback",
-                                            "/api/auth/forgot-password"
+                                            "/api/auth/forgot-password",
+                                            "/api/auth/logout"
                                     )
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
-                .sessionManagement(session ->
+                .sessionManagement( session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -58,7 +59,6 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(customAuthEntryPoint))
                 .build();
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider(){

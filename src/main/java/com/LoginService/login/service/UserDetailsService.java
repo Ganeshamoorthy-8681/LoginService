@@ -19,8 +19,6 @@ public class UserDetailsService  implements org.springframework.security.core.us
         if(user != null){
             return new com.LoginService.login.entity.UserDetails(user);
         }
-        else {
-            throw new UsernameNotFoundException("User not found!!");
-        }
+        throw new UsernameNotFoundException("User not found!!");
     }
 }

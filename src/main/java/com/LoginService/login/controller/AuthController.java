@@ -1,5 +1,4 @@
 package com.LoginService.login.controller;
-
 import com.LoginService.login.DTO.ForgotPasswordRequestDTO;
 import com.LoginService.login.DTO.LoginRequestDTO;
 import com.LoginService.login.DTO.SignUpRequestDTO;
@@ -13,6 +12,7 @@ import com.LoginService.login.service.SignUpService;
 import com.LoginService.login.util.CookieUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class AuthController {
     private GoogleLoginService googleLoginService;
 
     @PostMapping("login")
-    public ResponseEntity<String> login (@RequestBody LoginRequestDTO loginRequestDTO , HttpServletResponse response){
+    public ResponseEntity<String> login (@RequestBody  @Valid LoginRequestDTO loginRequestDTO , HttpServletResponse response){
         Map<String, String> authTokens =  loginService.verify(loginRequestDTO);
 
         authTokens.forEach((key, value) -> {
@@ -51,7 +51,7 @@ public class AuthController {
 
 
     @PostMapping("signup")
-    public ResponseEntity<UserResponseDTO> signup(@RequestBody SignUpRequestDTO userCredentialsDTO){
+    public ResponseEntity<UserResponseDTO> signup(@RequestBody @Valid SignUpRequestDTO userCredentialsDTO){
         UserResponseDTO user = signUpService.signup(userCredentialsDTO);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
@@ -86,11 +86,6 @@ public class AuthController {
     }
 
 
-    @GetMapping("data")
-    public String mockData(){
-        return "DATA CAN BE ACCESSED";
-    }
-
     @GetMapping("login-with-google")
     public ResponseEntity<String> loginWithGoogle(HttpServletResponse response) throws IOException {
 
@@ -104,10 +99,9 @@ public class AuthController {
     }
 
     @PatchMapping("forgot-password")
-    public  ResponseEntity<String> handleForgotPassword(@RequestBody ForgotPasswordRequestDTO forgotPasswordRequestDTO) throws UsernameNotFoundException {
+    public  ResponseEntity<String> handleForgotPassword(@RequestBody @Valid ForgotPasswordRequestDTO forgotPasswordRequestDTO) throws UsernameNotFoundException {
             return  loginService.forgotPassword(forgotPasswordRequestDTO);
     }
-
     @GetMapping("/google/callback")
     public ResponseEntity<String> authCode(@RequestParam("code") String code, HttpServletResponse response) {
 
@@ -117,5 +111,16 @@ public class AuthController {
             response.addCookie(cookie);
         });
         return new ResponseEntity<>("Success", HttpStatus.CREATED);
+    }
+
+    @GetMapping("validate")
+    public ResponseEntity<String> validateToken(){
+        // As the Validation done on filter just return the response
+        return new ResponseEntity<>("Valid",HttpStatus.OK);
+    }
+
+    @GetMapping("user/whoami")
+    public  ResponseEntity<UserResponseDTO> getUser(@CookieValue(value = "JWT") String jwtToken ){
+        return loginService.getUser(jwtToken);
     }
 }
