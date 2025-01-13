@@ -9,8 +9,6 @@ This repository contains the **Login Service** for a microservices-based ToDo ap
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
 - [Usage](#usage)
-- [License](#license)
-- [Contact](#contact)
 
 ---
 
