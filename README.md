@@ -1,4 +1,4 @@
-# Login Service for ToDo Microservices Application
+# Login  Microservice Application
 
 This repository contains the **Login Service** for a microservices-based ToDo application. It provides user authentication using **JWT** for sessionless security and includes Google OAuth 2.0 login functionality.
 
